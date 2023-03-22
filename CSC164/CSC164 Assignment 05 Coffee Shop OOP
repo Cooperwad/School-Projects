@@ -1,0 +1,142 @@
+// Cooper Waddington
+// Feb 27, 2023
+// CSC164-400
+// All code is my own
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Welcome to MoonBucks Coffee House");
+        Drink[] menu = new Drink[3];
+
+        menu[0] = new Drink("Dark Roast", "Short", 3, 0, 0, 3.99);
+        menu[1] = new Drink("Iced Coffee", "Tall",60, 1, 15, 6.99 );
+        menu[2] = new Drink("Caffe Mocha", "Grande", 300, 5, 25, 7.99);
+
+        menuOptions();
+
+
+        int input;
+        Scanner keys = new Scanner(System.in);
+        int choice = keys.nextInt();
+        switch (choice) {
+            case 1:
+                System.out.println("Enter max calories: ");
+                input = keys.nextInt();
+                for (Drink each : menu) {
+                    if (each.getCalories() < input) {
+                        System.out.println(each.getName() + ": " + each.getCalories() + " calories");
+                    }
+                }
+                break;
+            case 2:
+                System.out.println("Enter max grams of fat: ");
+                input = keys.nextInt();
+                for (Drink each : menu) {
+                    if (each.getTotalFat() < input) {
+                        System.out.println(each.getName() + ": " + each.getTotalFat() + " total fat");
+                    }
+                }
+                break;
+            case 3:
+                System.out.println("Enter max sugar: ");
+                input = keys.nextInt();
+                for (Drink each : menu) {
+                    if (each.getTotalSugar() < input) {
+                        System.out.println(each.getName() + ": " + each.getTotalSugar() + " calories");
+                    }
+                }
+                break;
+            case 4:
+                System.out.println("Our menu items for today include:");
+                for (Drink each : menu) {
+                    System.out.println(each.getName() + ", Size " + each.getSize() + ", " + each.getCalories() + " Calories" + ", Total fat is " + each.getTotalFat() + ", Total sugar is " + each.getTotalSugar() + " Price is $" + each.getPrice());
+                }
+                break;
+            case 5:
+                System.out.println("Exiting program.");
+                System.exit(0);
+            default:
+                System.out.println("Wrong input. Please enter a value from 1-5.");
+        }
+    }
+
+
+
+    public static void menuOptions() {
+        System.out.println("Pick one of the following to sort by:");
+        System.out.println("1. Calories\n2. Total fat\n3. Total sugar\n4. View all items\n5. Exit program");
+    }
+}
+
+public class Drink {
+    private String size;
+    private String name;
+    private double price;
+    private double totalFat;
+    private double totalSugar;
+    private int calories;
+
+    public Drink(String name, String size, int calories, double totalFat, double totalSugar, double price) {
+        this.name = name;
+        this.size = size;
+        this.calories = calories;
+        this.totalFat = totalFat;
+        this.totalSugar = totalSugar;
+        this.price = price;
+    }
+
+    void setName(String newName) {
+        this.name = newName;
+    }
+
+    String getName() {
+        return name;
+    }
+
+    void setSize(String s) {
+        this.size = s;
+    }
+
+    String getSize() {
+        return size;
+    }
+
+    void setCalories(int c) {
+        this.calories = c;
+    }
+
+    int getCalories() {
+        return calories;
+    }
+
+    void setTotalFat(double tf) {
+        this.totalFat = tf;
+    }
+
+    double getTotalFat() {
+        return totalFat;
+    }
+
+    void setTotalSugar(double ts) {
+        this.totalSugar = ts;
+    }
+
+    double getTotalSugar() {
+        return totalSugar;
+    }
+
+    void setPrice(double p) {
+        this.price = p;
+    }
+
+    double getPrice() {
+        return price;
+    }
+
+    public String toString() {
+        return name;
+    }
+
+
+    
