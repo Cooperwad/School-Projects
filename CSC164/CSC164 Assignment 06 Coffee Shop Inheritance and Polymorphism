@@ -1,0 +1,249 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Welcome to MoonBucks Coffee House");
+        ArrayList<Product> menu = new ArrayList<>();
+
+        Drink darkroast = new Drink("Short", 3, 0, 0);
+        Drink iced = new Drink("Tall",60, 1, 15);
+        Drink mocha = new Drink("Grande", 300, 5, 25);
+        Product mug = new Product(99.99, "Expensive mug");
+        GiftCard birthday = new GiftCard("Happy birthday!", 25);
+        GiftCard graduation = new GiftCard("Happy graduation!", 50);
+
+        menu.add(darkroast);
+        menu.add(iced);
+        menu.add(mocha);
+        menu.add(mug);
+        menu.add(birthday);
+        menu.add(graduation);
+
+        // sets description and price of arraylist items
+        menu.get(0).setDescription("Dark Roast");
+        menu.get(0).setPrice(3.99);
+        menu.get(1).setDescription("Iced Coffee");
+        menu.get(1).setPrice(6.99);
+        menu.get(2).setDescription("Caffe Mocha");
+        menu.get(2).setPrice(8.99);
+        menu.get(4).setDescription("Birthday");
+        menu.get(4).setPrice(25);
+        menu.get(5).setDescription("Graduation");
+        menu.get(5).setPrice(50);
+
+        int input;
+        Scanner keys = new Scanner(System.in);
+        System.out.println("Would you like to view all items, or just drinks?");
+        System.out.println("1. All items\n2. Drinks\n3. Exit program");
+        int type = keys.nextInt();
+        switch (type) {
+            case 1:
+                for (int i = 0; i < menu.size(); i++) {
+                    System.out.println(menu.get(i) );
+                }
+                break;
+            case 2:
+                menuOptions();
+                int choice = keys.nextInt();
+                switch (choice) {
+                    case 1:
+                        System.out.println("Enter max calories: ");
+                        input = keys.nextInt();
+                        for (int i = 0; i < menu.size(); i++) {
+                            if (menu.get(i) instanceof Drink) {
+                                Drink tempDrink = (Drink)menu.get(i);
+                                if (tempDrink.getCalories() <= input) {
+                                    System.out.println(tempDrink.getDescription() + ": " + tempDrink.getCalories() + " calories");
+                                }
+                            }
+                        }
+                        break;
+                    case 2:
+                        System.out.println("Enter max grams of fat: ");
+                        input = keys.nextInt();
+                        for (int i = 0; i < menu.size(); i++) {
+                            if (menu.get(i) instanceof Drink) {
+                                Drink tempDrink = (Drink)menu.get(i);
+                                if (tempDrink.getTotalFat() <= input) {
+                                    System.out.println(tempDrink.getDescription() + ": " + tempDrink.getTotalFat() + " total fat");
+                                }
+                            }
+                        }
+                        break;
+                    case 3:
+                        System.out.println("Enter max sugar: ");
+                        input = keys.nextInt();
+                        for (int i = 0; i < menu.size(); i++) {
+                            if (menu.get(i) instanceof Drink) {
+                                Drink tempDrink = (Drink)menu.get(i);
+                                if (tempDrink.getTotalSugar() <= input) {
+                                    System.out.println(tempDrink.getDescription() + ": " + tempDrink.getTotalSugar() + " total sugar");
+                                }
+                            }
+                        }
+                        break;
+                    case 4:
+                        System.out.println("Our menu items for today include:");
+                        for (int i = 0; i < menu.size(); i++) {
+                            if (menu.get(i) instanceof Drink) {
+                                System.out.println(menu.get(i));
+                            }
+                        }
+                        break;
+                    default:
+                        System.out.println("Wrong input. Please enter a value from 1-5.");
+                }
+            case 3:
+                System.out.println("Exiting program.");
+                System.exit(0);
+            default:
+                System.out.println("Wrong input. Please enter a value from 1-2.");
+        }
+
+    }
+
+    static void menuOptions() {
+        System.out.println("Pick one of the following to sort by:");
+        System.out.println("1. Calories\n2. Total fat\n3. Total sugar\n4. View menu\n5. Exit program");
+    }
+
+
+}
+
+
+public class Product {
+
+    private double price;
+    private String description;
+
+    public Product(double price, String description) {
+        this.price = price;
+        this.description = description;
+
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "price=" + price +
+                ", description='" + description + '\'' +
+                '}';
+    }
+}
+
+
+public class Drink extends Product {
+    private String size;
+    private double totalFat;
+    private double totalSugar;
+    private int calories;
+
+    public Drink (String size, int calories, double totalFat, double totalSugar) {
+        super(3.99, "Dark roast");
+        this.size = size;
+        this.calories = calories;
+        this.totalFat = totalFat;
+        this.totalSugar = totalSugar;
+
+    }
+
+
+
+    void setSize(String s) {
+        this.size = s;
+    }
+
+    String getSize() {
+        return size;
+    }
+
+    void setCalories(int c) {
+        this.calories = c;
+    }
+
+    int getCalories() {
+        return calories;
+    }
+
+    void setTotalFat(double tf) {
+        this.totalFat = tf;
+    }
+
+    double getTotalFat() {
+        return totalFat;
+    }
+
+    void setTotalSugar(double ts) {
+        this.totalSugar = ts;
+    }
+
+    double getTotalSugar() {
+        return totalSugar;
+    }
+
+    @Override
+    public String toString() {
+        return "Drink{" +
+                "size='" + size + '\'' +
+                ", totalFat=" + totalFat +
+                ", totalSugar=" + totalSugar +
+                ", calories=" + calories +
+                '}' + " " + super.toString();
+    }
+
+
+}
+
+
+public class GiftCard extends Product {
+    private String specialMessage;
+    private double balance;
+
+    public GiftCard(String specialMessage, double balance) {
+        super(0, "default");
+        this.specialMessage = specialMessage;
+        this.balance = balance;
+
+    }
+
+    public String getSpecialMessage() {
+        return specialMessage;
+    }
+
+    public void setSpecialMessage(String specialMessage) {
+        this.specialMessage = specialMessage;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    @Override
+    public String toString() {
+        return "GiftCard{" +
+                "specialMessage='" + specialMessage + '\'' +
+                ", balance=" + balance +
+                '}' + " " + super.toString();
+    }
+}
