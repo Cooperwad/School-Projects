@@ -1,0 +1,15 @@
+// Cooper Waddington
+// CSC164-400
+// 1/11/2023
+// I wrote all the code submitted, and I have provided citations and references where appropriate.
+
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner keys = new Scanner(System.in);
+        int num = keys.nextInt();
+
+
+         
+    }
+}
