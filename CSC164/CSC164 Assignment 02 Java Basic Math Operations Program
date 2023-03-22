@@ -1,0 +1,59 @@
+// Cooper Waddington
+// CSC164-400
+// Assignment 2: Java Basic Math Operations Program
+// 1/21/2023
+// I wrote all the code submitted OR I have provided citations and references where appropriate.
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        // Was looking for ways of input validation online and try case was what I found
+        // https://www.w3schools.com/java/java_try_catch.asp
+        try {
+            System.out.println("Please select the math operation you would like to do: ");
+            System.out.println("1: Addition\n" + "2: Subtraction\n" + "3: Multiplication\n" + "4: Division\n" + "5: Exit");
+            Scanner keys = new Scanner(System.in);
+            boolean flag;
+            int choice = keys.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.println("\nEnter 2 numbers: ");
+                    double add1 = keys.nextDouble();
+                    double add2 = keys.nextDouble();
+                    double sum = add1 + add2;
+                    System.out.println(add1 + " + " + add2 + " = " + sum);
+                    break;
+                case 2:
+                    System.out.println("\nEnter 2 numbers: ");
+                    double sub1 = keys.nextDouble();
+                    double sub2 = keys.nextDouble();
+                    double diff = sub1 - sub2;
+                    System.out.println(sub1 + " - " + sub2 + " = " + diff);
+                    break;
+                case 3:
+                    System.out.println("\nEnter 2 numbers: ");
+                    double mult1 = keys.nextDouble();
+                    double mult2 = keys.nextDouble();
+                    double product = mult1 * mult2;
+                    System.out.println(mult1 + " * " + mult2 + " = " + product);
+                    break;
+                case 4:
+                    System.out.println("\nEnter 2 numbers: ");
+                    double div1 = keys.nextDouble();
+                    double div2 = keys.nextDouble();
+                    double quotient = div1 / div2;
+                    System.out.println(div1 + " / " + div2 + " = " + quotient);
+                    break;
+                case 5:
+                    System.out.println("\nExiting program.");
+                    System.exit(0);
+                    break;
+            }
+        } catch(Exception e) {
+            System.out.println("You have not typed a valid selection, please run the program again.");
+        }
+
+    }
+}
