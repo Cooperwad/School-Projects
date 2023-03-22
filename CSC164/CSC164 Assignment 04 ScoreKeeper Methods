@@ -1,11 +1,13 @@
 //Cooper Waddington
-//1/25/2023
+//2/6/2023
 //CSC164-400
 //All code is my own
 
 import javax.management.Query;
 import java.util.Random;
 import java.util.Scanner;
+
+
 
 public class Main {
     public static void main(String[] args) {
@@ -17,15 +19,7 @@ public class Main {
 
         int[][] teamScores = new int[NUM_GAMES][NUM_PERIODS];
 
-        Random rng = new Random();
-        rng.setSeed(0);
-
-
-        for (int i = 0; i < NUM_GAMES; i++) {
-            for (int j = 0; j < NUM_PERIODS; j++) {
-                teamScores[i][j] = rng.nextInt(LOW_SCORE_PER_PERIOD, HIGH_SCORE_PER_PERIOD+1);
-            }
-        }
+        GameScores(NUM_GAMES, NUM_PERIODS, HIGH_SCORE_PER_PERIOD, LOW_SCORE_PER_PERIOD, teamScores);
 
 //        for (int i = 0; i < NUM_GAMES; i++) {
 //            System.out.println("\nThis team, in game # " + (i + 1));
@@ -35,78 +29,99 @@ public class Main {
 //        }
 
         Scanner keys = new Scanner(System.in);
+        Menu();
+        double periodOne = 0, periodTwo = 0;
+        int sum = 0;
+        int choice = keys.nextInt();
+        switch (choice) {
+            case 1:
+                for (int i = 0; i < NUM_GAMES; i++) {
+                    for (int j = 0; j < NUM_PERIODS; j++) {
+                        sum += teamScores[i][j];
+                    }
+
+                }
+                System.out.println("The average points scored per match for this season is: " + (double)sum / NUM_GAMES);
+
+                break;
+            case 2:
+                System.out.println("Select a match(1-10): ");
+                matchSelection(sum, NUM_PERIODS, teamScores);
+                break;
+            case 3:
+                //avg per period
+                System.out.println("Please select a period(1/2): ");
+                int periodChoice = keys.nextInt();
+                if (periodChoice == 1){
+                    for (int i = 0; i < NUM_GAMES; i++) {
+                        periodOne += teamScores[i][0];
+                    }
+                    System.out.println("The average number of points scored in period 1 is " + periodOne / 10);
+                } else if (periodChoice == 2) {
+                    for (int i = 0; i < NUM_GAMES; i++) {
+                        periodTwo += teamScores[i][1];
+                    }
+                    System.out.println("The average number of points scored in period 2 is " + periodTwo / 10);
+                } else {
+                    System.out.println("Please enter the value 1 or 2. ");
+                }
+                break;
+            case 4:
+                System.out.println("Exiting program.");
+                System.exit(0);
+            default:
+                System.out.println("Please enter a value from 1 to 4. ");
+                break;
+        }
+    }
+
+    public static int matchSelection(int sum, final int NUM_PERIODS, int[][] teamScores) {
+        Scanner keys = new Scanner(System.in);
+        int matchChoice = keys.nextInt();
+        switch (matchChoice) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+                System.out.println("Match #" + matchChoice + " details: " );
+                for (int i = 0; i < NUM_PERIODS; i++) {
+                    System.out.println("Period " + (i+1) + ": " + teamScores[matchChoice - 1][i]);
+                    sum += teamScores[matchChoice - 1][i];
+                }
+                System.out.println("Total scored in match: " + sum);
+                break;
+            default:
+                System.out.println("Please enter a value from 1 to 10.");
+                break;
+        }
+        return matchChoice;
+    }
+
+    public static int GameScores(final int NUM_GAMES, final int NUM_PERIODS, final int HIGH_SCORE_PER_PERIOD, final int LOW_SCORE_PER_PERIOD, int[][] teamScores) {
+
+        Random rng = new Random();
+        rng.setSeed(0);
+
+        for (int i = 0; i < NUM_GAMES; i++) {
+            for (int j = 0; j < NUM_PERIODS; j++) {
+                teamScores[i][j] = rng.nextInt(LOW_SCORE_PER_PERIOD, HIGH_SCORE_PER_PERIOD+1);
+            }
+        }
+
+        return 0;
+    }
+
+    public static void Menu(){
         System.out.println("Choose one of the following: ");
         System.out.println("View average points scored per match for entire season(1)");
         System.out.println("View scores for a given match(2)");
         System.out.println("View average points scored for a period(3)");
         System.out.println("Exit program(4)");
-        double periodOne = 0, periodTwo = 0;
-        int sum = 0;
-        while (true) {
-        int choice = keys.nextInt();
-            switch (choice) {
-                case 1:
-                    for (int i = 0; i < NUM_GAMES; i++) {
-                        for (int j = 0; j < NUM_PERIODS; j++) {
-                            sum += teamScores[i][j];
-                        }
-
-                    }
-                    System.out.println("The average points scored per match for this season is: " + (double)sum / NUM_GAMES);
-
-                    break;
-                case 2:
-                    System.out.println("Select a match(1-10): ");
-                    int matchChoice = keys.nextInt();
-                    switch (matchChoice) {
-                        case 1:
-                        case 2:
-                        case 3:
-                        case 4:
-                        case 5:
-                        case 6:
-                        case 7:
-                        case 8:
-                        case 9:
-                        case 10:
-                            System.out.println("Match #" + matchChoice + " details: " );
-                            for (int i = 0; i < NUM_PERIODS; i++) {
-                                System.out.println("Period " + (i+1) + ": " + teamScores[matchChoice - 1][i]);
-                                sum += teamScores[matchChoice - 1][i];
-                            }
-                            System.out.println("Total scored in match: " + sum);
-                            break;
-                        default:
-                            System.out.println("Please enter a value from 1 to 10.");
-                            break;
-                    }
-                    break;
-                case 3:
-                    //avg per period
-                    System.out.println("Please select a period(1/2): ");
-                    int periodChoice = keys.nextInt();
-                    if (periodChoice == 1){
-                        for (int i = 0; i < NUM_GAMES; i++) {
-                            periodOne += teamScores[i][0];
-                        }
-                        System.out.println("The average number of points scored in period 1 is " + periodOne / 10);
-                    } else if (periodChoice == 2) {
-                        for (int i = 0; i < NUM_GAMES; i++) {
-                            periodTwo += teamScores[i][1];
-                        }
-                        System.out.println("The average number of points scored in period 2 is " + periodTwo / 10);
-                    } else {
-                        System.out.println("Please enter the value 1 or 2. ");
-                    }
-                    break;
-                case 4:
-                    System.out.println("Exiting program.");
-                    System.exit(0);
-                default:
-                    System.out.println("Please enter a value from 1 to 4. ");
-                    break;
-
-            }
-        }
     }
 }
