@@ -1,0 +1,116 @@
+// Cooper Waddington
+// 9/9/2023
+// CSC 214-401
+// All code is my own
+
+import java.io.IOException;
+import java.util.List;
+
+public class Main {
+    public static void main(String[] args) {
+        final String fileName  = "TonerReport.csv";
+        CSVParser parser = new CSVParser(fileName);
+        try {
+            List<Printer> printers = parser.parse();
+            Notifier notifier = new Notifier();
+            notifier.notifyLowToner(printers);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("File reading error");
+        }
+    }
+
+}
+
+// Cooper Waddington
+// 9/9/2023
+// CSC 214-401
+// All code is my own
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class CSVParser {
+
+    private String fileName;
+
+    public CSVParser(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public List<Printer> parse() throws IOException {
+        List<Printer> printers = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            br.readLine();
+            while ((line = br.readLine()) != null) {
+                System.out.println("Reading line: " + line);
+                String[] values = line.split(",");
+                if (values.length >= 6) {
+                    String name = values[0].trim();
+                    double tonerLevel = Double.parseDouble(values[5].trim());
+                    printers.add(new Printer(name, tonerLevel));
+                }
+            }
+        }
+        System.out.println("Number of printers found: " + printers.size());
+        return printers;
+    }
+
+}
+
+
+// Cooper Waddington
+// 9/9/2023
+// CSC 214-401
+// All code is my own
+
+import java.util.List;
+
+public class Notifier {
+
+    public void notifyLowToner(List<Printer> printers) {
+        for (Printer printer : printers) {
+            if (printer.isLowToner()) {
+                System.out.println(printer + " WARNING: Low Toner");
+            }
+        }
+    }
+
+}
+
+
+// Cooper Waddington
+// 9/9/2023
+// CSC 214-401
+// All code is my own
+
+public class Printer {
+    private String name;
+    private double tonerLevel;
+
+    public Printer(String name, double tonerLevel) {
+        this.name = name;
+        this.tonerLevel = tonerLevel;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getTonerLevel() {
+        return tonerLevel;
+    }
+
+    public boolean isLowToner() {
+        return tonerLevel < 10;
+    }
+
+    @Override
+    public String toString() {
+        return "Printer: " + name + ", Toner Level: " + tonerLevel + "%";
+    }
+}
