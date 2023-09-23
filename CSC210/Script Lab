@@ -1,0 +1,29 @@
+#!/bin/sh
+#raspi_script.sh
+#Cooper Waddington
+#9/18/2023
+#The purpose of this script is to make use of the commands we've learned up 
+#till now in a scripting context. This code makes a directory and file and
+#eventually deletes all files.
+
+
+read -p "Enter a name for the directory: " dir_name
+read -p "Enter a name for the file: " file_name
+
+mkdir "$dir_name"
+echo "Directory $dir_name created."
+
+touch "$dir_name/$file_name.txt"
+echo "File $file_name.txt created in directory $dir_name."
+
+echo "This is content added to $file_name.txt" > "$dir_name/$file_name.txt"
+echo "Content added to $file_name.txt."
+
+cp "$dir_name/$file_name.txt" "$dir_name/copy_$file_name.txt"
+echo "Copy of $file_name.txt created as copy_$file_name.txt."
+
+rm "$dir_name"/*.txt
+echo "All files in directory $dir_name deleted."
+
+rmdir "$dir_name"
+echo "Directory $dir_name deleted."
