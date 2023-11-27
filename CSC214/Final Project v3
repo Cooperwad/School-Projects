@@ -1,0 +1,198 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <time.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <wiringPi.h>
+#include <wiringPiSPI.h>
+
+#define SPI_CHANNEL 0
+#define SPI_SPEED 1000000
+#define NUM_MAX7219 4
+
+// Placeholder for sending data to a single MAX7219 chip
+void sendToMax(int maxNumber, unsigned char reg, unsigned char value) {
+    // Implementation specific to your hardware
+}
+
+void sendToMax(int maxNumber, unsigned char reg, unsigned char value) {
+    unsigned char data[2 * NUM_MAX7219];
+    
+    // Initialize all data to 0, meaning no operation for the MAX7219
+    for (int i = 0; i < 2 * NUM_MAX7219; i++) {
+        data[i] = 0x00;
+    }
+    
+    // Calculate the position in the array for the chip we want to address
+    // If the chips are in reverse order, we need to invert the maxNumber
+    int position = 2 * (NUM_MAX7219 - 1 - maxNumber);
+    
+    // Set the register and value for the specified chip
+    data[position] = reg;
+    data[position + 1] = value;
+    
+    // Send the data to the chain
+    wiringPiSPIDataRW(SPI_CHANNEL, data, 2 * NUM_MAX7219);
+}
+
+
+// Function to initialize all MAX7219 chips
+void initMax7219(void) {
+    int i;
+    for(i = 0; i < NUM_MAX7219; ++i) {
+        sendToMax(i, 0x0C, 0x01); // Turn on the display
+        sendToMax(i, 0x0B, 0x07); // Set scan limit to 8 digits
+        sendToMax(i, 0x09, 0x00); // Use LED matrix (not 7-segment)
+        sendToMax(i, 0x0A, 0x08); // Set intensity (range is 0x00 to 0x0F)
+        sendToMax(i, 0x0F, 0x00); // Exit display test mode
+    }
+}
+
+// Function to clear all displays
+void clearMax7219(void) {
+    int i, j;
+    for(i = 0; i < NUM_MAX7219; ++i) {
+        for(j = 1; j <= 8; ++j) {
+            sendToMax(i, j, 0x00);
+        }
+    }
+}
+
+// Function to update and display the time
+void displayTime(struct tm *timeinfo) {
+
+    // Convert 24-hour to 12-hour format
+    int hour = timeinfo->tm_hour;
+    int pmFlag = hour >= 12;
+    hour = hour % 12;
+    hour = hour ? hour : 12; // Convert '0' to '12'
+
+    // Define the patterns for each numeral from 0 to 9
+    unsigned char digitPatterns[10][8] = {
+        // 0
+        {0b00000000, 0b00111100, 0b01100110, 0b01100110, 0b01100110, 0b01100110, 0b00111100, 0b00000000},
+        // 1
+        {0b00000000, 0b00011000, 0b00111000, 0b00011000, 0b00011000, 0b00011000, 0b01111110, 0b00000000},
+        // 2
+        {0b00000000, 0b00111100, 0b01100110, 0b00001100, 0b00110000, 0b01100000, 0b01111110, 0b00000000},
+        // 3
+        {0b00000000, 0b00111100, 0b01100110, 0b00001100, 0b00000110, 0b01100110, 0b00111100, 0b00000000},
+        // 4
+        {0b00000000, 0b00001100, 0b00011100, 0b00101100, 0b01001100, 0b01111110, 0b00001100, 0b00000000},
+        // 5
+        {0b00000000, 0b01111110, 0b01100000, 0b01111100, 0b00000110, 0b00000110, 0b01111100, 0b00000000},
+        // 6
+        {0b00000000, 0b00111100, 0b01100000, 0b01111100, 0b01100110, 0b01100110, 0b00111100, 0b00000000},
+        // 7
+        {0b00000000, 0b01111110, 0b00000110, 0b00001100, 0b00011000, 0b00011000, 0b00011000, 0b00000000},
+        // 8
+        {0b00000000, 0b00111100, 0b01100110, 0b00111100, 0b01100110, 0b01100110, 0b00111100, 0b00000000},
+        // 9
+        {0b00000000, 0b00111100, 0b01100110, 0b01100110, 0b00111110, 0b00000110, 0b00111100, 0b00000000}
+
+    };
+    
+    // Define the pattern for the colon
+    unsigned char colonPattern[8] = {0x00, 0x00, 0x24, 0x24, 0x00, 0x00, 0x00, 0x00};
+
+    // Clear all displays before setting new data
+    clearMax7219();
+    
+
+    // Write the hours (tens and ones)
+    int tens = hour / 10;
+    int ones = hour % 10;
+
+    // Write the minutes (tens and ones)
+    int minTens = timeinfo->tm_min / 10;
+    int minOnes = timeinfo->tm_min % 10;
+
+    // Prepare the data for each MAX7219 chip
+    unsigned char dataForMax[NUM_MAX7219][8];
+    memset(dataForMax, 0, sizeof(dataForMax)); // Initialize all data to 0
+
+    // If you have the last MAX7219 in the chain representing the first digit, fill in the data in reverse order
+    // Assuming dataForMax[0] is the last MAX7219 chip in the chain
+    for (int i = 0; i < 8; i++) {
+        dataForMax[3][i] = digitPatterns[tens][i];     // Hours tens
+        dataForMax[2][i] = digitPatterns[ones][i];     // Hours ones
+        dataForMax[1][i] = colonPattern[i];            // Colon
+        dataForMax[1][i] |= digitPatterns[minTens][i]; // Minutes tens
+        dataForMax[0][i] = digitPatterns[minOnes][i];  // Minutes ones
+    }
+
+    // Add AM/PM indicator to the last chip (which is the first in the chain)
+    // Set a specific LED or segment here for AM/PM indication
+    dataForMax[0][7] |= pmFlag ? 0x80 : 0x00; // Modify this line to set the correct segment for AM/PM
+
+    // Send the data to the MAX7219 chips
+    for (int chip = 0; chip < NUM_MAX7219; chip++) {
+        for (int reg = 1; reg <= 8; reg++) {
+            sendToMax(chip, reg, dataForMax[chip][reg - 1]);
+        }
+    }
+}
+
+// Function for handling the alarm
+void *alarmHandler(void *args) {
+    // Placeholder for handling the alarm prompt and triggering the buzzer
+    // Add your alarm handling code here
+
+    // This example demonstrates a simple prompt
+    while(1) {
+        char response;
+        printf("Set an alarm? (y/n): ");
+        scanf(" %c", &response); // Note the space before %c to capture any whitespace
+
+        if(response == 'y' || response == 'Y') {
+            // Handle setting the alarm
+            printf("Alarm set!\n");
+        }
+    }
+}
+
+int main() {
+    // Initialize wiringPi and SPI
+    if (wiringPiSetup() == -1) {
+        fprintf(stderr, "wiringPi setup failed.\n");
+        return 1;
+    }
+    if (wiringPiSPISetup(SPI_CHANNEL, SPI_SPEED) == -1) {
+        fprintf(stderr, "SPI setup failed.\n");
+        return 1;
+    }
+
+    // Initialize and clear the MAX7219 displays
+    initMax7219();
+    clearMax7219();
+
+    // Create a thread for the alarm functionality
+    pthread_t alarmThread;
+    if(pthread_create(&alarmThread, NULL, alarmHandler, NULL) != 0) {
+        fprintf(stderr, "Failed to create the alarm thread.\n");
+        return 1;
+    }
+
+    // Main loop for the clock
+    while (1) {
+        time_t rawtime;
+        struct tm *timeinfo;
+
+        // Get current time
+        time(&rawtime);
+        timeinfo = localtime(&rawtime);
+
+        // Update and display the time
+        displayTime(timeinfo);
+
+        // Delay for a second before updating the time again
+        sleep(1);
+    }
+
+    // Join the alarm thread before exiting
+    pthread_join(alarmThread, NULL);
+
+    return 0;
+}
