@@ -1,0 +1,55 @@
+import java.util.*;
+
+
+public class LinkedStack<T> implements Stack<T> {
+    private Node head;
+    private int size = 0;
+
+
+    @Override
+    public void push(T item) {
+        Node temp = new Node(item);
+        temp.next = head;
+        head = temp;
+        size++;
+    }
+
+    @Override
+    public T peek() {
+        if (isEmpty()) {
+            System.out.println("Stack is empty. ");
+            return null;
+        }
+        return head.data;
+    }
+
+    @Override
+    public T pop() {
+        if (isEmpty()) {
+            System.out.println("Stack is empty. ");
+            return null;
+        }
+        T temp = head.data;
+        head = head.next;
+        size--;
+        return temp;
+    }
+
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    private class Node {
+        private T data;
+        private Node next;
+        public Node (T data) {
+            this.data = data;
+        }
+    }
+}
