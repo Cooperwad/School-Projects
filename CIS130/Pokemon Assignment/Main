@@ -1,0 +1,139 @@
+/*
+Cooper Waddington
+CIS211-400
+2/7/2024
+All code is my own
+ */
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class Main {
+    static ArrayList<Pokemon> pokedex = new ArrayList<>();
+
+    public static void main(String[] args) {
+
+        String filepath = "resources/pokemon.txt";
+        File pokedexFile = new File(filepath);
+
+        Scanner keys = new Scanner(System.in);
+
+        try {
+            Scanner fileinput = new Scanner(pokedexFile);
+
+            // throw away first line
+            fileinput.nextLine();
+
+            while(fileinput.hasNextLine() == true) {
+                String lineInfo = fileinput.nextLine();
+                String[] lineInfoSplit = lineInfo.split(",");
+
+                Pokemon tempPoke = new Pokemon();
+                tempPoke.setId(Integer.parseInt(lineInfoSplit[0]));
+                tempPoke.setName(lineInfoSplit[1]);
+                tempPoke.setType1(lineInfoSplit[2]);
+                tempPoke.setType2(lineInfoSplit[3]);
+                tempPoke.setTotal(Integer.parseInt(lineInfoSplit[4]));
+                tempPoke.setHp(Integer.parseInt(lineInfoSplit[5]));
+                tempPoke.setAttack(Integer.parseInt(lineInfoSplit[6]));
+                tempPoke.setDefense(Integer.parseInt(lineInfoSplit[7]));
+                tempPoke.setSpecialAtk(Integer.parseInt(lineInfoSplit[8]));
+                tempPoke.setSpecialDef(Integer.parseInt(lineInfoSplit[9]));
+                tempPoke.setSpeed(Integer.parseInt(lineInfoSplit[10]));
+                tempPoke.setGen(Integer.parseInt(lineInfoSplit[11]));
+                tempPoke.setLegendary(Boolean.parseBoolean(lineInfoSplit[12]));
+
+                pokedex.add(tempPoke);
+            }
+
+
+        } catch (FileNotFoundException e) {
+            System.out.println(e);
+        }
+
+        //LinkedStack<Pokemon> player = new LinkedStack();
+        LinkedStack<Pokemon> npc = new LinkedStack();
+        HashMap<String, Pokemon> map = new HashMap<>();
+
+        Collections.shuffle(pokedex);
+        for (int i = 0; i < 10; i++ ) {
+            if (i < 5) {
+                // adds first 15 to hash map, maps the ID to the card
+                Pokemon temp = pokedex.get(i);
+                map.put(temp.getName(), temp);
+            } else {
+                // pushes the rest to the npc
+                npc.push(pokedex.get(i));
+            }
+        }
+
+        // game logic
+        int roundCount = 1;
+        int winCount = 0;
+
+        System.out.println("Your cards are: " );
+
+        for (int i = 0; i < 5; i++) {
+            System.out.println(pokedex.get(i));
+        }
+        while (roundCount > 0 && roundCount < 6) {
+
+            System.out.println("\nWhich card would you like to play? Enter the name of the card below: ");
+            String choice = keys.next();
+            Pokemon temp = map.get(choice);
+
+            if (map.containsKey(choice)) {
+                System.out.println("\nRound: " + roundCount);
+                Pokemon npcCard = npc.pop();
+                System.out.println("You played the card: " + temp);
+                System.out.println("You are challenged by: " + npcCard);
+                System.out.println("FIGHT");
+                if (temp.getAttack() > npcCard.getDefense()) {
+                    System.out.println("Player has won!\n");
+                    winCount++;
+                } else if (temp.getAttack() == npcCard.getDefense()) {
+                    System.out.println("It's a tie!\n");
+                } else {
+                    System.out.println("Computer has won!\n");
+                }
+                roundCount++;
+            } else {
+                System.out.println("No matching name. ");
+            }
+        }
+        System.out.println("The battle has come to an end. The players score is: " + winCount);
+
+// code for non user input version
+
+
+//        while (!player.isEmpty() && !npc.isEmpty()) {
+//
+//            Pokemon playerCard = player.pop();
+//            Pokemon npcCard = npc.pop();
+//
+//
+//            System.out.println("Round: " + roundCount);
+//            System.out.println("Player: " + playerCard);
+//            System.out.println("You are challenged by " + npcCard);
+//            System.out.println("FIGHT");
+//            if (playerCard.getAttack() > npcCard.getDefense()) {
+//                System.out.println("Player has won!\n");
+//                winCount++;
+//            } else if (playerCard.getAttack() == npcCard.getDefense()) {
+//                System.out.println("It's a tie!\n");
+//            }else {
+//                System.out.println("Computer has won!\n");
+//            }
+//            roundCount++;
+//        }
+//        System.out.println("The battle has come to an end. The players score is: " + winCount);
+
+
+    }
+
+
+}
