@@ -1,0 +1,166 @@
+import java.math.*;
+import java.util.Scanner;
+
+
+public class Main {
+    public static void main(String[] args) {
+
+        // testing nFactorial and factorial methods
+        int[] testVal = {5, 10, 15, 20, 25, 30};
+//        for (int i = 0; i < testVal.length; i++) {
+//            // nFactorial
+//            long startTime = System.nanoTime();
+//            int iterativeFactResult = nFactorial(testVal[i]);
+//            long endTime = System.nanoTime();
+//            System.out.println("Iterative factorial(" + i + ") = " + iterativeFactResult + " took " + (endTime - startTime) + " nanoseconds.");
+//
+//            // factorial
+//            startTime = System.nanoTime();
+//            long recursiveFactResult = factorial(testVal[i]);
+//            endTime = System.nanoTime();
+//            System.out.println("Recursive factorial(" + i + ") = " + recursiveFactResult + " took " + (endTime - startTime) + " nanoseconds.");
+//
+//        }
+
+        for (int i = 0; i < testVal.length; i++) {
+            // nFibonacci
+            long startTime = System.nanoTime();
+            int fibResult = nFibonacci(testVal[i]);
+            long endTime = System.nanoTime();
+            System.out.println("Iterative fib(" + i + ") = " + fibResult + " took " + (endTime -startTime)  + " nanoseconds");
+
+            // fibonacci
+            startTime = System.nanoTime();
+            long recursiveFibResult = fib(testVal[i]);
+            endTime = System.nanoTime();
+            System.out.println("Recursive fib(" + i + ") = " + recursiveFibResult + " took " + (endTime -startTime)  + " nanoseconds");
+
+        }
+
+//        String[] testStrings = {"radar", "level", "rotor", "racecar", "civic", "madam", "refer", "deed", "kayak", "tenet", "madam", "racecar", "madam", "madam", "mada", "madam", "cat", "cat", "cat", "cat", "cat"};
+//
+//        for (int i = 0; i < testStrings.length; i++) {
+//            // nIsPalindrome
+//
+//            long startTime = System.nanoTime();
+//            boolean palResult = nIsPalindrome(testStrings[i]);
+//            long endTime = System.nanoTime();
+//            System.out.println("Iterative palindrome(" + i + ") = " + palResult + " took " + (endTime -startTime)  + " nanoseconds");
+//
+//            // isPalindrome
+//            startTime = System.nanoTime();
+//            boolean recursivePalResult = isPalindrome(testStrings[i]);
+//            endTime = System.nanoTime();
+//            System.out.println("Recursive palindrome(" + i + ") = " + recursivePalResult + " took " + (endTime -startTime)  + " nanoseconds");
+//
+//        }
+
+
+    }
+
+    // Recursive factorial
+    public static long factorial(int n) {
+        if (n == 0) // Base case
+            return 1;
+
+        else
+            return n * factorial(n - 1); // Recursive call
+
+    }
+
+    // Iterative factorial
+    public static int nFactorial(long n) {
+        int result = 1;
+        for (int i = 1; i <= n; i++)
+            result *= i;
+        return result;
+    }
+
+    // Iterative Fibonacci
+    public static int nFibonacci(int n) {
+        if (n <= 1) {
+            return n;
+        }
+        int sum;
+        int a = 0, b = 1;
+        for (int i = 1; i < n; i++) {
+            sum = a + b;
+            a = b;
+            b = sum;
+        }
+        return b;
+    }
+
+    // Recursive Fibonacci
+    public static long fib(long index) {
+        if (index == 0)
+            return 0;
+        else if (index == 1)
+            return 1;
+        else
+            return fib(index - 1) + fib(index - 2);
+    }
+
+    // Iterative palindrome check
+    public static boolean nIsPalindrome(String s) {
+        int low = 0, high = s.length() - 1;
+        while (low < high) {
+            if (s.charAt(low++) != s.charAt(high--)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Recursive palindrome check
+    public static boolean isPalindrome(String s) {
+        return isPalindrome(s, 0, s.length() - 1);
+    }
+
+    private static boolean isPalindrome(String s, int low, int high) {
+        if (high <= low)
+            return true;
+        else if (s.charAt(low) != s.charAt(high))
+            return false;
+        else
+            return isPalindrome(s, low + 1, high - 1);
+    }
+
+    // Iterative binary search
+    static int nBinarySearch(int[] arr, int val) {
+        return nBinarySearch(arr, val, 0, arr.length - 1);
+    }
+
+    private static int nBinarySearch(int[] arr, int val, int low, int high) {
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (arr[mid] == val) {
+                return mid;
+            } else if (arr[mid] > val) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+        return -1;
+    }
+
+    // Recursive binary search
+    public static int recursiveBinarySearch(int[] list, int key) {
+        return recursiveBinarySearch(list, key, 0, list.length - 1);
+    }
+
+    private static int recursiveBinarySearch(int[] list, int key, int low, int high) {
+        if (low > high)
+            return -1;
+        int mid = (low + high) / 2;
+        if (key == list[mid])
+            return mid;
+        else if (key < list[mid])
+            return recursiveBinarySearch(list, key, low, mid - 1);
+        else
+            return recursiveBinarySearch(list, key, mid + 1, high);
+    }
+
+
+}
